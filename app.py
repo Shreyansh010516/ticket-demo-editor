@@ -158,9 +158,13 @@ with st.form("editor"):
     submitted = st.form_submit_button("Generate Preview", use_container_width=True)
 
 if submitted:
-    date_value = date_text.strip()
-    price_value = price_text.strip()
-    number_value = ticket_number.strip().upper()
+    # Read the widget state at the moment Generate Preview is clicked. Clear
+    # the previous preview first so an old ticket can never be shown after a
+    # new submission or validation error.
+    st.session_state.pop("ticket_image", None)
+    date_value = st.session_state.get("date_input", "").strip()
+    price_value = st.session_state.get("price_input", "").strip()
+    number_value = st.session_state.get("number_input", "").strip().upper()
     if price_value and not price_value.startswith("₹"):
         price_value = "₹" + price_value
     values = [date_value, price_value, number_value]
@@ -168,6 +172,7 @@ if submitted:
         st.error("Please enter a Date, Ticket Price, and Ticket Number.")
     else:
         st.session_state.ticket_image = render_ticket(*values)
+        st.session_state.last_generated_values = tuple(values)
 
 if "ticket_image" in st.session_state:
     result = st.session_state.ticket_image
