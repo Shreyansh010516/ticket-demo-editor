@@ -15,13 +15,16 @@ except ImportError:
 st.set_page_config(page_title="Ticket Image Editor", page_icon="🎟️", layout="centered")
 
 TEMPLATE_PATH = os.path.join(os.path.dirname(__file__), "template.png")
+# Bundle the font with the project so local Windows and Streamlit Cloud use
+# the same font file instead of falling back to Pillow's tiny default font.
+FONT_PATH = os.path.join(os.path.dirname(__file__), "fonts", "arialbd.ttf")
 
 # Authorized blank-template configuration. Coordinates are pixel positions in
 # the supplied 1600 x 624 image and should be adjusted for another template.
 EDITABLE_FIELDS = {
-    "date": {"box": (620, 543, 980, 584), "font_file": "C:/Windows/Fonts/arialbd.ttf", "font_size": 44, "text_color": (255, 255, 255), "max_width": 330, "padding": 8, "horizontal": "center", "vertical": "center"},
-    "price": {"box": (724, 18, 1111, 113), "font_file": "C:/Windows/Fonts/arialbd.ttf", "font_size": 88, "text_color": (24, 40, 45), "max_width": 365, "padding": 8, "horizontal": "center", "vertical": "center"},
-    "ticket_number": {"box": (1242, 96, 1518, 158), "font_file": "C:/Windows/Fonts/arialbd.ttf", "font_size": 50, "text_color": (24, 40, 45), "max_width": 255, "padding": 8, "horizontal": "center", "vertical": "center"},
+    "date": {"box": (620, 543, 980, 584), "font_file": FONT_PATH, "font_size": 44, "text_color": (255, 255, 255), "max_width": 330, "padding": 8, "horizontal": "center", "vertical": "center"},
+    "price": {"box": (724, 18, 1111, 113), "font_file": FONT_PATH, "font_size": 88, "text_color": (24, 40, 45), "max_width": 365, "padding": 8, "horizontal": "center", "vertical": "center"},
+    "ticket_number": {"box": (1242, 96, 1518, 158), "font_file": FONT_PATH, "font_size": 50, "text_color": (24, 40, 45), "max_width": 255, "padding": 8, "horizontal": "center", "vertical": "center"},
 }
 
 def get_font(size, font_file=None, bold=True):
@@ -34,6 +37,8 @@ def get_font(size, font_file=None, bold=True):
         if not path:
             continue
         try:
+            if not os.path.exists(path):
+                continue
             return ImageFont.truetype(path, size)
         except OSError:
             pass
