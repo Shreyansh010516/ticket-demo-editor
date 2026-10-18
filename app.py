@@ -19,9 +19,9 @@ TEMPLATE_PATH = os.path.join(os.path.dirname(__file__), "template.png")
 # Authorized blank-template configuration. Coordinates are pixel positions in
 # the supplied 1600 x 624 image and should be adjusted for another template.
 EDITABLE_FIELDS = {
-    "date": {"box": (620, 543, 980, 584), "font_file": "C:/Windows/Fonts/arialbd.ttf", "font_size": 38, "text_color": (255, 255, 255), "max_width": 330, "horizontal": "center", "vertical": "center"},
-    "price": {"box": (724, 18, 1111, 113), "font_file": "C:/Windows/Fonts/arialbd.ttf", "font_size": 78, "text_color": (24, 40, 45), "max_width": 365, "horizontal": "center", "vertical": "center"},
-    "ticket_number": {"box": (1242, 96, 1518, 158), "font_file": "C:/Windows/Fonts/arialbd.ttf", "font_size": 42, "text_color": (24, 40, 45), "max_width": 255, "horizontal": "center", "vertical": "center"},
+    "date": {"box": (620, 543, 980, 584), "font_file": "C:/Windows/Fonts/arialbd.ttf", "font_size": 44, "text_color": (255, 255, 255), "max_width": 330, "padding": 8, "horizontal": "center", "vertical": "center"},
+    "price": {"box": (724, 18, 1111, 113), "font_file": "C:/Windows/Fonts/arialbd.ttf", "font_size": 88, "text_color": (24, 40, 45), "max_width": 365, "padding": 8, "horizontal": "center", "vertical": "center"},
+    "ticket_number": {"box": (1242, 96, 1518, 158), "font_file": "C:/Windows/Fonts/arialbd.ttf", "font_size": 50, "text_color": (24, 40, 45), "max_width": 255, "padding": 8, "horizontal": "center", "vertical": "center"},
 }
 
 def get_font(size, font_file=None, bold=True):
@@ -92,7 +92,8 @@ def render_ticket(date_text, price_text, ticket_number):
         # The supplied master is already blank in these fields, so do not
         # touch its pixels before rendering. This preserves the original
         # gradients and decorative artwork exactly.
-        font = fit_font(draw, value, field["max_width"], field["font_size"], field["font_file"])
+        available_width = max(1, field["max_width"] - (2 * field.get("padding", 0)))
+        font = fit_font(draw, value, available_width, field["font_size"], field["font_file"])
         draw_centered(draw, field["box"], value, font, field["text_color"], field["horizontal"], field["vertical"])
     return image
 
@@ -172,10 +173,10 @@ if "ticket_image" in st.session_state:
     current_download, cart_add = st.columns(2)
     with current_download:
         st.download_button(
-            "Download current image",
-            data=export_bytes(result, "JPEG"),
-            file_name="ticket.jpg",
-            mime="image/jpeg",
+            "Download JPEG",
+            export_bytes(result, "JPEG"),
+            "ticket.jpeg",
+            "image/jpeg",
             use_container_width=True,
         )
     with cart_add:
